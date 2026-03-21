@@ -67,3 +67,6 @@ reversed_dictionary = dataloader.reverse_dictionary
 model = Word2Vec(dict_size, reversed_dictionary=reversed_dictionary, embedding_size=50, window_size=5, lr=0.1)
 
 train(model, train_dataloader, test_dataloader, batch_size=32)
+
+np.save("lookup_matrix.npy", model.lookup_matrix)
+np.save("logit_matrix.npy", model.logit_matrix)

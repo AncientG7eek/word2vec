@@ -1,0 +1,16 @@
+model:
+  embedding_size: 100
+  window_size: 5
+  learning_rate: 0.01
+
+training:
+  batch_size: 32
+  epochs: 20
+  
+
+data:
+  min_count: 3
+  subsample_t: 1e-5
+  data_path: "books/"
+  size: 10000000
+  train_fraction: 0.8

@@ -1,8 +1,13 @@
 import numpy as np
 from tqdm import tqdm
 from model import Word2Vec
-from dataloader import DataLoader, load_books
+from dataloader import DataLoader, Config, load_books
+import yaml
 
+with open('configs/config.yaml', "r") as f:
+    config = yaml.safe_load(f)
+
+config = Config(config)
 
 def train(model, train_dataloader, test_dataloader, epochs=10, batch_size=16):
   for epoch in range(epochs):
@@ -47,10 +52,10 @@ def train(model, train_dataloader, test_dataloader, epochs=10, batch_size=16):
     print(f"Testining loss: {np.mean(test_losses)}")
 
 
-text = load_books("books")
-size = 1_000_000
+text = load_books(config.data.data_path)
+size = config.data.size
 text = text[:size] 
-train_size = int(0.8 * size)
+train_size = int(config.data.train_fraction * size)
 train_set = text[:train_size]
 test_set = text[train_size:]
 
@@ -64,9 +69,14 @@ train_dataloader = DataLoader(train_set, dictionary)
 test_dataloader = DataLoader(test_set, dictionary)
 
 reversed_dictionary = dataloader.reverse_dictionary
-model = Word2Vec(dict_size, reversed_dictionary=reversed_dictionary, embedding_size=50, window_size=5, lr=0.1)
+embedding_size=config.model.embedding_size
+window_size=config.model.window_size
+lr=config.model.learning_rate
+model = Word2Vec(dict_size, reversed_dictionary=reversed_dictionary, embedding_size=embedding_size, window_size=window_size, lr=lr)
 
-train(model, train_dataloader, test_dataloader, batch_size=32)
+batch_size=config.training.batch_size
+epochs=config.training.epochs
+train(model, train_dataloader, test_dataloader, batch_size=batch_size, epochs=epochs)
 
 np.save("lookup_matrix.npy", model.lookup_matrix)
 np.save("logit_matrix.npy", model.logit_matrix)

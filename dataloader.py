@@ -76,6 +76,11 @@ class DataLoader:
       num_samples = len(self.tokenized_text) - 2*ray
       return (num_samples + batch_size - 1) // batch_size
 
+class Config:
+    def __init__(self, d):
+        for k, v in d.items():
+            setattr(self, k, Config(v) if isinstance(v, dict) else v)
+
 
 def load_books(folder):
   texts = []
